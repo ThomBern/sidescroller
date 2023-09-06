@@ -7,12 +7,12 @@
 #include "sidescrollerCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class AsidescrollerCharacter : public ACharacter
+class AsidescrollerCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	AsidescrollerCharacter();
+	AsidescrollerCharacterBase();
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;

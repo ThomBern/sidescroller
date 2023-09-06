@@ -3,63 +3,43 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Templates/SubclassOf.h"
-#include "GameFramework/PlayerController.h"
+#include "InputAction.h"
 #include "InputActionValue.h"
+#include "GameFramework/PlayerController.h"
 #include "sidescrollerPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
-class UNiagaraSystem;
+class UEnhancedInputComponent;
+class AsidescrollerCharacterBase;
+class UInputMappingContext;
 
-UCLASS()
-class AsidescrollerPlayerController : public APlayerController
+UCLASS(Abstract)
+class AsidescrollerPlayerControllerBase : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-	AsidescrollerPlayerController();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Character Movement")
+	TObjectPtr<UInputAction> ActionMove = nullptr;
 
-	/** Time Threshold to know if it was a short press */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	float ShortPressThreshold;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Character Movement")
+	TObjectPtr<UInputAction> ActionJump = nullptr;
 
-	/** FX Class that we will spawn when clicking */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UNiagaraSystem* FXCursor;
-
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
-	
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputAction* SetDestinationClickAction;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputAction* SetDestinationTouchAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Character Movement")
+	TObjectPtr<UInputMappingContext> InputMappingContent = nullptr;
 
 protected:
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
 
-	virtual void SetupInputComponent() override;
-	
-	// To add mapping context
-	virtual void BeginPlay();
-
-	/** Input handlers for SetDestination action. */
-	void OnInputStarted();
-	void OnSetDestinationTriggered();
-	void OnSetDestinationReleased();
-	void OnTouchTriggered();
-	void OnTouchReleased();
+	void HandleMove(const FInputActionValue& InputActionValue);
+	void HandleJump();
 
 private:
-	FVector CachedDestination;
+	UPROPERTY()
+	TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = nullptr;
+	
+	UPROPERTY()
+	TObjectPtr<AsidescrollerCharacterBase> PlayerCharacter = nullptr;
 
-	bool bIsTouch; // Is it a touch device
-	float FollowTime; // For how long it has been pressed
 };
-
-
