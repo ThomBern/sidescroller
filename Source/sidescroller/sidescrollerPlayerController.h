@@ -6,6 +6,7 @@
 #include "InputAction.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
+#include "SDDABaseAbility.h"
 #include "sidescrollerPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
@@ -36,10 +37,15 @@ protected:
 	void HandleJump();
 
 private:
+	void InitializeAbilities();
+	void DeInitializeAbilities();
+
 	UPROPERTY()
 	TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = nullptr;
 	
 	UPROPERTY()
 	TObjectPtr<AsidescrollerCharacterBase> PlayerCharacter = nullptr;
 
+	UPROPERTY()
+	TArray<TObjectPtr<USDDABaseAbility>> Abilities;
 };
